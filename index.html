@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staking Checker - LTTK</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #1A1A1A;
+      color: #fff;
+      font-family: 'Lora', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    h1 {
+      color: #A38C4E;
+    }
+    button {
+      background-color: #A38C4E;
+      color: #1A1A1A;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-family: 'Lora', serif;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Staking Checker - LTTK</h1>
+  <button id="connectButton">Connect MetaMask</button>
+  <div id="status"></div>
+
+  <script>
+    const contractAddress = "0x0000000000000000000000000000000000000000"; // Replace with your actual contract address
+    const minStaking = ethers.utils.parseUnits("50000", 18); // Minimum 50,000 LTTK
+
+    const stakingAbi = [
+      "function getStakedAmount(address) view returns (uint256)"
+    ];
+
+    const connectButton = document.getElementById("connectButton");
+    const statusDiv = document.getElementById("status");
+
+    connectButton.onclick = async () => {
+      if (typeof window.ethereum === "undefined") {
+        alert("MetaMask is not installed.");
+        return;
+      }
+
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
+
+        const stakingContract = new ethers.Contract(contractAddress, stakingAbi, provider);
+        const stakedAmount = await stakingContract.getStakedAmount(userAddress);
+
+        if (stakedAmount.gte(minStaking)) {
+          statusDiv.innerHTML = `✅ You have active staking: ${ethers.utils.formatUnits(stakedAmount, 18)} LTTK`;
+          setTimeout(() => {
+            window.location.href = "https://litteratoken.com/readers"; // Redirect after successful staking check
+          }, 2000); // Wait 2 seconds before redirecting
+        } else {
+          statusDiv.innerHTML = `❌ Not enough staking. You have ${ethers.utils.formatUnits(stakedAmount, 18)} LTTK staked.`;
+        }
+      } catch (error) {
+        console.error(error);
+        statusDiv.innerHTML = "Error checking staking.";
+      }
+    };
+  </script>
+</body>
+</html>
