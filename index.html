@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Staking Checker - LTTK</title>
+  <title>Staking Checker - LITK</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
   <style>
@@ -21,6 +21,7 @@
     }
     h1 {
       color: #A38C4E;
+      margin-top: 20px;
     }
     button {
       background-color: #A38C4E;
@@ -37,16 +38,25 @@
       margin-top: 20px;
       font-size: 18px;
     }
+    /* Estilo do logo */
+    #logo {
+      width: 100px; /* Ajuste o tamanho do logo conforme necessário */
+      height: auto;
+      margin-bottom: 20px; /* Espaço entre o logo e o título */
+    }
   </style>
 </head>
 <body>
-  <h1>Staking Checker - LTTK</h1>
+  <!-- Logo acima do título -->
+  <img id="logo" src="https://raw.githubusercontent.com/Litteratoken/readers/c7c1e29c6abaddcf563ede080711bef97125a729/logo%20br%20transp.png" alt="LITK Logo" />
+
+  <h1>Staking Checker - LITK</h1>
   <button id="connectButton">Connect MetaMask</button>
   <div id="status"></div>
 
   <script>
     const contractAddress = "0x0000000000000000000000000000000000000000"; // Replace with your actual contract address
-    const minStaking = ethers.utils.parseUnits("50000", 18); // Minimum 50,000 LTTK
+    const minStaking = ethers.utils.parseUnits("50000", 18); // Minimum 50,000 LITK
 
     const stakingAbi = [
       "function getStakedAmount(address) view returns (uint256)"
@@ -71,12 +81,9 @@
         const stakedAmount = await stakingContract.getStakedAmount(userAddress);
 
         if (stakedAmount.gte(minStaking)) {
-          statusDiv.innerHTML = `✅ You have active staking: ${ethers.utils.formatUnits(stakedAmount, 18)} LTTK`;
-          setTimeout(() => {
-            window.location.href = "https://litteratoken.com/readers"; // Redirect after successful staking check
-          }, 2000); // Wait 2 seconds before redirecting
+          statusDiv.innerHTML = `✅ You have active staking: ${ethers.utils.formatUnits(stakedAmount, 18)} LITK`;
         } else {
-          statusDiv.innerHTML = `❌ Not enough staking. You have ${ethers.utils.formatUnits(stakedAmount, 18)} LTTK staked.`;
+          statusDiv.innerHTML = `❌ Not enough staking. You have ${ethers.utils.formatUnits(stakedAmount, 18)} LITK staked.`;
         }
       } catch (error) {
         console.error(error);
